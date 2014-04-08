@@ -1,0 +1,154 @@
+#include <iostream>
+#include <vector>
+#include <time.h>
+#include <limits.h>
+#include <locale.h>
+#include <string>
+#include <cstdlib>
+#include <exception>
+using namespace std;
+
+//#define DEBAG 1;
+
+int left_g,right_g;
+//вывод вектора на экран
+void printmass(vector <int> mass){
+    vector <int>::iterator cur;
+    for(cur=mass.begin();cur<mass.end();cur++){cout<<*cur<<",";}
+    cout<<endl;
+}
+
+//пузырьковая сортировка
+
+void bubblesort(vector <int> &mass, int n){
+    for(int i=n-1;i>=0;i--){
+        for(int j=0; j<i;j++){
+            if(mass[j]>mass[j+1]){
+                swap(mass[j],mass[j+1]);
+            }
+        }
+    }
+}
+
+int partition(vector<int> &mass, int left, int right)
+{
+    int x=mass[right];
+    int i=left-1;
+    for(int j=left;j<right;j++)
+    {
+        if(mass[j]<=x)
+        {i++;swap(mass[i],mass[j]);}
+    }
+    swap(mass[i+1],mass[right]);
+    return i+1;
+}
+//быстрая сортировка
+void quicksort(vector<int>& mass, int left, int right)
+{
+    int q;
+    if(left<right)
+    {
+        q=partition(mass,left,right);
+        quicksort(mass,left,q-1);
+        quicksort(mass,q+1,right);
+    }
+}
+
+//сортировка слиянием
+void Merge(vector <int> &mass, int left, int right)
+{
+    int middle, start, final, j;
+    int *mas=new int[mass.size()];
+    {
+        middle=(left+right)/2; //делим массив
+        start=left; //начало левой части
+        final=middle+1; //начало правой части
+        for(j=left; j<=right; j++) //от начала до конца
+            if ((start<=middle) && ((final>right) || (mass[start]<mass[final])))
+            {
+                mas[j]=mass[start];
+                start++;
+            }
+            else
+            {
+                mas[j]=mass[final];
+                final++;
+            }
+        //возвращение результата в список
+        for (j=left; j<=right; j++) mass[j]=mas[j];
+    }
+    delete[]mas;
+}
+
+void MergeSort(vector <int> &mass, int left, int right)
+{
+    {
+        if (left<right)
+        {
+            MergeSort(mass, left, (left+right)/2); //сортируем левую часть
+            MergeSort(mass, (left+right)/2+1, right); //сортируем правую часть
+            Merge(mass, left, right); //сливаем две части
+        }
+    }
+}
+
+double MainSort(vector <int> &mass, int method){
+    //cout<<"Отсортированный массив"<<endl;
+    clock_t startq=clock();
+    switch(method){
+    case 1:{bubblesort(mass,mass.size());} break;
+    case 2:{quicksort(mass,0,(mass.size()-1));} break;
+    case 3:{MergeSort(mass,0,mass.size()-1);}  break;
+    default:break;
+    }
+    clock_t endq=clock();
+    // printmass(mass);
+    double tq=(double)(endq-startq)/CLOCKS_PER_SEC;
+    return tq;
+}
+
+void Testing(){
+    cout<<"Программа работает в режиме автоматического тестирования\n";
+    vector <int> mass;
+    vector <int> mass1;
+    vector <int> mass2;
+    int debag=0;
+    int size_mass=rand()%right_g + left_g;
+    for(int i=0;i<size_mass;i++){
+        int temp_r=rand()%right_g;
+        mass.push_back(temp_r);
+        mass1.push_back(temp_r);
+        mass2.push_back(temp_r);
+    }
+  //  printmass(mass);
+   // double tr=MainSort(mass,3);
+   // double tp=MainSort(mass,3);
+
+   // printmass(mass);
+    //cout<<"Сортировка заняла времени"<<tp<<" "<<tr<<endl<<endl;
+    if (debag)
+    {   printmass(mass);cout<<"Сортировка пузырьком неотсортированного массива:"<<MainSort(mass,1)<<endl;
+        printmass(mass); cout<<"Сортировка пузырьком отсортированного массива:"<<MainSort(mass,1)<<endl;
+        printmass(mass1);  cout<<"Сортировка быстрая неотсортированного массива:"<<MainSort(mass1,2)<<endl;
+        printmass(mass1); cout<<"Сортировка быстрая отсортированного массива:"<<MainSort(mass1,2)<<endl;
+        printmass(mass2);cout<<"Сортировка слиянием неотсортированного массива:"<<MainSort(mass2,3)<<endl;
+        printmass(mass2); cout<<"Сортировка слиянием отсортированного массива:"<<MainSort(mass2,3)<<endl;}
+    else
+    {   cout<<"Сортировка пузырьком неотсортированного массива:"<<MainSort(mass,1)<<endl;
+        cout<<"Сортировка пузырьком отсортированного массива:"<<MainSort(mass,1)<<endl;
+        cout<<"Сортировка быстрая неотсортированного массива:"<<MainSort(mass1,2)<<endl;
+        cout<<"Сортировка быстрая отсортированного массива:"<<MainSort(mass1,2)<<endl;
+        cout<<"Сортировка слиянием неотсортированного массива:"<<MainSort(mass2,3)<<endl;
+        cout<<"Сортировка слиянием отсортированного массива:"<<MainSort(mass2,3)<<endl;}
+}
+
+int main(){
+    setlocale(0,"");
+    srand(time(NULL));
+    left_g=1000;right_g=10000;
+    Testing();
+    left_g=10000;right_g=100000;
+    Testing();
+    return 0;
+}
+
