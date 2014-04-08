@@ -1,0 +1,50 @@
+#include <iostream>
+#include <vector>
+#include <time.h>
+#include <stdlib.h>
+#include <pisort.h>
+#include <fstream>
+
+#define SIZE_V 10          //количество элементов в пирамиде при создании объекта вектором
+#define MAX_RAND 100000
+using namespace std;
+
+int main()
+{
+    vector <int> input;                     //вектор для значений которые занесем в объект
+    vector <int> addon;
+    ofstream f;
+    srand(time(NULL));
+    for(size_t i=0;i<SIZE_V;i++){
+        int temp=rand()%MAX_RAND+1;
+        input.push_back(temp);
+    }
+    size_t save=0;
+    cout<<"Сохранять результат в файл? 0-если нет, 1-если да"<<endl;
+    cin>>save;
+    if(save==1){
+        char s[20];
+        cout<<"Введите имя файла:";
+        cin>>s;
+        f.open(s);
+    }
+    PiSort a(input);//создание объекта класса пирамида с элементами из вектора значений
+
+    if(save==1) {f<<"Просто вектор, свойство пирамиды не соблюдено"<<endl; a.PiFOutput(f);}
+    else {cout<<"Просто вектор, свойство пирамиды не соблюдено"<<endl;a.PiOutput();}
+
+    a.PiProseykaAll();
+    if(save==1) {f<<"Преобразуем массив в пирамиду"<<endl; a.PiFOutput(f);}
+    else {cout<<"Преобразуем массив в пирамиду"<<endl;a.PiOutput();}
+
+    a.PiRemove(2);
+    if(save==1) {f<<"Удаляем третий элемент из пирамиды"<<endl; a.PiFOutput(f);}
+    else {cout<<"Удаляем третий элемент из пирамиды"<<endl;a.PiOutput();}
+    a.PiSortir();//сортируем
+    if(save==1) {f<<"Сортированная пирамида"<<endl; a.PiFOutput(f);}
+    else {cout<<"Сортированная пирамида"<<endl;a.PiOutput();}
+    f.close();
+    //  size_t i=a.PiSize();//тест метода получения размера массива в котором пирамида
+    //  cout<<endl<<i;
+}
+
